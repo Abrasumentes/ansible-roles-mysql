@@ -1,0 +1,31 @@
+---
+    - name: Pymyql is present
+      become: true
+      pip:
+        name: pymysql
+        state: present
+
+    - name: Install MySQL database
+      apt: name=default-mysql-server state=present
+   
+    - name: Start MySQL service
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: Create App DB
+      become: true
+      mysql_db:
+        login_unix_socket: /var/run/mysqld/mysqld.sock 
+        name: employee_db
+        state: present
+
+    - name: Create DB user
+      mysql_user:
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        name: db_user
+        password: qwerty12345
+        priv: '*.*:ALL'
+        state: present
+        host: '%'
